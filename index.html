@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Missão Frações — Robô Entregador</title>
+<style>
+:root{--bg:#f6f3e9;--ink:#222;--card:#fff;--road:#d9dde2;--accent:#e53935;--ok:#168a4a;--blue:#1565c0;--purple:#7b1fa2;--shadow:0 10px 28px #0002}
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(135deg,#fff7df,#eef7ff);color:var(--ink)}
+header{padding:18px 22px;background:#b71c1c;color:#fff;display:flex;gap:15px;align-items:center;justify-content:space-between;flex-wrap:wrap} header h1{margin:0;font-size:clamp(22px,3vw,34px)} header p{margin:3px 0 0;opacity:.92}
+.badge{background:#fff;color:#b71c1c;padding:8px 12px;border-radius:999px;font-weight:800}
+main{max-width:1200px;margin:auto;padding:18px;display:grid;grid-template-columns:1.15fr .85fr;gap:18px}.panel{background:var(--card);border-radius:18px;padding:18px;box-shadow:var(--shadow)}
+@media(max-width:850px){main{grid-template-columns:1fr}}
+.topline{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}.mission{font-size:20px;font-weight:850}.small{font-size:14px;color:#555}
+#problem{margin:12px 0;padding:13px;background:#fff8e1;border-left:6px solid #ffb300;border-radius:10px;line-height:1.45}.mathq{font-weight:800;color:#6a1b9a}
+.grid{margin:14px auto 4px;display:grid;grid-template-columns:repeat(7,1fr);aspect-ratio:1/1;max-width:650px;border:5px solid #546e7a;border-radius:12px;overflow:hidden;background:#b9e7a5;position:relative}.cell{position:relative;border:1px solid #ffffff77;display:flex;align-items:center;justify-content:center;font-size:clamp(10px,1.5vw,14px);text-align:center;padding:2px}.road{background:var(--road)}.place{background:#ffe082;font-weight:800;border:2px solid #f9a825}.pizzeria{background:#ffcc80}.target{box-shadow:inset 0 0 0 4px #43a047}.robot{position:absolute;width:10.5%;height:10.5%;z-index:5;display:grid;place-items:center;font-size:clamp(25px,4vw,46px);transition:left .28s linear,top .28s linear;filter:drop-shadow(0 3px 2px #0004)}
+.controls h2{margin:0 0 8px}.blocks{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btn{border:0;border-radius:12px;padding:12px 10px;font-weight:850;font-size:16px;cursor:pointer;box-shadow:0 3px 0 #0002}.front{background:#42a5f5;color:#fff}.back{background:#7e57c2;color:#fff}.left{background:#ffca28}.right{background:#ff7043;color:#fff}.run{background:#2e7d32;color:#fff;width:100%;margin-top:10px}.clear{background:#eceff1}.undo{background:#cfd8dc}.next{background:#1565c0;color:#fff}.disabled{opacity:.45;pointer-events:none}
+.program{min-height:82px;background:#263238;color:#fff;padding:10px;border-radius:12px;margin:10px 0;display:flex;gap:6px;flex-wrap:wrap;align-content:flex-start}.codeblock{padding:7px 9px;border-radius:8px;font-size:13px;font-weight:800;background:#455a64}.status{min-height:52px;margin-top:10px;padding:10px;border-radius:10px;background:#f5f5f5;font-weight:700}.good{background:#e8f5e9;color:#146b37}.bad{background:#ffebee;color:#a31515}.warn{background:#fff8e1;color:#795500}
+.score{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.score div{background:#f4f6f8;border-radius:10px;padding:9px;text-align:center}.score b{display:block;font-size:20px}.answerbox{display:flex;gap:7px;margin-top:8px}.answerbox input{width:120px;padding:9px;border:2px solid #ccc;border-radius:9px;font-size:16px}.answerbox button{border:0;border-radius:9px;padding:9px 12px;font-weight:800;cursor:pointer}.legend{font-size:13px;margin-top:9px;color:#555}.footer{max-width:1200px;margin:0 auto 20px;padding:0 18px;color:#666;font-size:13px}
+</style></head>
+<body>
+<header><div><h1>🍕 Missão Frações — Robô Entregador</h1><p>Resolva a fração, programe o caminho e entregue a pizza!</p></div><div class="badge">5º ANO • 20 MISSÕES</div></header>
+<main>
+<section class="panel">
+ <div class="topline"><div class="mission" id="missionTitle"></div><div class="small" id="progress"></div></div>
+ <div id="problem"></div>
+ <div class="answerbox"><input id="mathAnswer" placeholder="Resposta"><button id="checkMath">✓ Conferir matemática</button></div>
+ <div class="small">Digite a resposta como número inteiro ou fração, por exemplo: <b>2</b>, <b>3/4</b> ou <b>9/8</b>.</div>
+ <div class="grid" id="grid"><div class="robot" id="robot">🤖</div></div>
+ <div class="legend">🍕 Pizzaria = início • 🏠 Cliente = destino • ruas cinzas = caminho permitido. O robô só pode andar pelas ruas.</div>
+</section>
+<section class="panel controls">
+ <h2>🧩 Monte o código em blocos</h2>
+ <div class="small">Cada bloco movimenta o robô <b>uma casa</b>. A sequência deve levar da Pizzaria até o cliente indicado.</div>
+ <div class="blocks" style="margin-top:10px">
+   <button class="btn front" data-dir="FRENTE">⬆ FRENTE</button><button class="btn back" data-dir="ATRÁS">⬇ ATRÁS</button>
+   <button class="btn left" data-dir="ESQUERDA">⬅ ESQUERDA</button><button class="btn right" data-dir="DIREITA">➡ DIREITA</button>
+ </div>
+ <div class="program" id="program"><span style="opacity:.7">Seu programa aparecerá aqui…</span></div>
+ <div class="blocks"><button class="btn undo" id="undo">↶ Desfazer</button><button class="btn clear" id="clear">🗑 Limpar</button></div>
+ <button class="btn run" id="run">▶ EXECUTAR PROGRAMA</button>
+ <div class="status warn" id="status">Primeiro resolva a situação matemática. Depois programe o robô.</div>
+ <div class="score"><div><b id="hits">0</b>Missões</div><div><b id="attempts">0</b>Tentativas</div><div><b id="stars">☆☆☆</b>Desempenho</div></div>
+ <button class="btn next disabled" id="next" style="width:100%;margin-top:12px">PRÓXIMA MISSÃO →</button>
+</section>
+</main><div class="footer">Projeto interdisciplinar: Matemática + Programação e Robótica. Os desafios usam frações em situações de entrega de pizzas e pensamento computacional.</div>
+<script>
+const places={
+ PIZZARIA:[6,0], JOÃO:[0,0], ANA:[0,3], PEDRO:[0,6], SOFIA:[6,2], CARLOS:[6,4], MARINA:[6,6]
+};
+// O mapa usa ruas nas linhas 0,3,6 e colunas 0,2,4,6, criando múltiplas rotas válidas.
+const isRoad=(r,c)=>r===0||r===3||r===6||c===0||c===2||c===4||c===6;
+const missions=[
+ {to:'ANA',q:'Ana pediu <b>10 pedaços</b> de pizza. Cada pizza possui 8 pedaços. Quantos pedaços correspondem à parte que passa de 1 pizza inteira?',a:'2'},
+ {to:'PEDRO',q:'Pedro pediu <b>6/8</b> de uma pizza. Simplifique a fração.',a:'3/4'},
+ {to:'MARINA',q:'Marina pediu <b>3/4</b> de uma pizza. Quantos pedaços ela receberá se a pizza tem 8 pedaços?',a:'6'},
+ {to:'JOÃO',q:'João pediu <b>1 1/4</b> pizza. Escreva como fração imprópria.',a:'5/4'},
+ {to:'SOFIA',q:'Sofia pediu <b>2 pizzas inteiras</b>. Cada uma possui 8 pedaços. Quantos pedaços são ao todo?',a:'16'},
+ {to:'CARLOS',q:'Carlos pediu <b>12 pedaços</b>. Cada pizza possui 8. Escreva a quantidade em oitavos.',a:'12/8'},
+ {to:'PEDRO',q:'Pedro pediu <b>5/8</b> e Marina 11/8. Quem pediu a menor quantidade? Digite a fração do menor pedido.',a:'5/8'},
+ {to:'MARINA',q:'Marina pediu <b>11/8</b>. Quantos pedaços são necessários além de uma pizza inteira?',a:'3'},
+ {to:'JOÃO',q:'João pediu <b>15 pedaços</b>. Quantos pedaços faltam para completar 2 pizzas de 8 pedaços?',a:'1'},
+ {to:'ANA',q:'Ana pediu <b>5 pedaços</b> de uma pizza com 8 pedaços. Qual fração representa o pedido?',a:'5/8'},
+ {to:'CARLOS',q:'Carlos pediu <b>2 1/2</b> pizzas. Escreva como fração imprópria.',a:'5/2'},
+ {to:'SOFIA',q:'Sofia pediu <b>1 1/2</b> pizza. Se cada pizza tem 8 pedaços, quantos pedaços são?',a:'12'},
+ {to:'MARINA',q:'Marina pediu <b>3 pedaços</b>. Qual fração de uma pizza de 8 pedaços isso representa?',a:'3/8'},
+ {to:'JOÃO',q:'João pediu <b>13 pedaços</b>. Escreva o pedido como fração com denominador 8.',a:'13/8'},
+ {to:'ANA',q:'Ana pediu <b>9/8</b>. Quantos pedaços ela pediu?',a:'9'},
+ {to:'PEDRO',q:'Pedro pediu <b>7/8</b>. Quantos pedaços faltam para completar uma pizza?',a:'1'},
+ {to:'SOFIA',q:'Sofia pediu <b>20 pedaços</b>. Quantas pizzas inteiras podem ser formadas?',a:'2'},
+ {to:'CARLOS',q:'Carlos pediu <b>12 pedaços</b>. Depois de formar 1 pizza inteira, quantos pedaços restam?',a:'4'},
+ {to:'MARINA',q:'Marina pediu <b>1 1/2</b> pizza. Escreva essa quantidade em oitavos.',a:'12/8'},
+ {to:'JOÃO',q:'João pediu <b>3/4</b> de pizza. Em uma pizza de 8 pedaços, quantos pedaços devem ser entregues?',a:'6'}
+];
+let idx=0, program=[], mathOK=false, completed=false, attempts=0, hits=0, pos=[...places.PIZZARIA];
+const grid=document.getElementById('grid'),robot=document.getElementById('robot'),status=document.getElementById('status');
+function buildGrid(){for(let r=0;r<7;r++)for(let c=0;c<7;c++){let d=document.createElement('div');d.className='cell '+(isRoad(r,c)?'road':'');d.dataset.r=r;d.dataset.c=c;let name=Object.keys(places).find(k=>places[k][0]===r&&places[k][1]===c);if(name){d.classList.add('place'); if(name==='PIZZARIA')d.classList.add('pizzeria');d.innerHTML=name==='PIZZARIA'?'🍕<br>PIZZARIA':'🏠<br>'+name}grid.appendChild(d)}}
+function setRobot(r,c){pos=[r,c];robot.style.left=(c*100/7+1.1)+'%';robot.style.top=(r*100/7+1.1)+'%'}
+function norm(s){s=s.trim().replace(',','.').replace(/\s/g,'');if(s.includes('/')){let [a,b]=s.split('/').map(Number);if(!b)return s;let g=(x,y)=>y?g(y,x%y):x;let z=g(Math.abs(a),Math.abs(b));return (a/z)+'/'+(b/z)}return String(Number(s))}
+function load(){completed=false;mathOK=false;program=[];setRobot(...places.PIZZARIA);document.querySelectorAll('.target').forEach(x=>x.classList.remove('target'));let m=missions[idx];document.getElementById('missionTitle').textContent=`Missão ${idx+1}: Entrega para ${m.to}`;document.getElementById('progress').textContent=`${idx+1} de ${missions.length}`;document.getElementById('problem').innerHTML=`🍕 <b>Situação matemática:</b> ${m.q}<br><span class="mathq">Resolva antes de liberar a programação.</span>`;document.getElementById('mathAnswer').value='';let [tr,tc]=places[m.to];document.querySelector(`.cell[data-r="${tr}"][data-c="${tc}"]`).classList.add('target');renderProgram();status.className='status warn';status.textContent='Primeiro resolva a situação matemática. Depois programe o robô.';document.getElementById('next').classList.add('disabled')}
+function renderProgram(){let p=document.getElementById('program');p.innerHTML=program.length?'':`<span style="opacity:.7">Seu programa aparecerá aqui…</span>`;program.forEach((x,i)=>{let s=document.createElement('span');s.className='codeblock';s.textContent=(i+1)+'. '+({'FRENTE':'⬆','ATRÁS':'⬇','ESQUERDA':'⬅','DIREITA':'➡'}[x])+' '+x;p.appendChild(s)})}
+document.getElementById('checkMath').onclick=()=>{if(norm(document.getElementById('mathAnswer').value)===norm(missions[idx].a)){mathOK=true;status.className='status good';status.textContent='✓ Matemática correta! Agora monte o código para chegar até '+missions[idx].to+'.'}else{status.className='status bad';status.textContent='Ainda não. Revise o cálculo da fração e tente novamente.'}}
+document.querySelectorAll('[data-dir]').forEach(b=>b.onclick=()=>{if(!mathOK){status.className='status warn';status.textContent='Resolva a Matemática antes de programar.';return} if(program.length<30){program.push(b.dataset.dir);renderProgram()}})
+document.getElementById('undo').onclick=()=>{program.pop();renderProgram()};document.getElementById('clear').onclick=()=>{program=[];renderProgram();setRobot(...places.PIZZARIA)};
+const delta={FRENTE:[-1,0],ATRÁS:[1,0],ESQUERDA:[0,-1],DIREITA:[0,1]};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+document.getElementById('run').onclick=async()=>{if(!mathOK){status.className='status warn';status.textContent='Primeiro resolva a situação matemática.';return}if(!program.length)return;attempts++;document.getElementById('attempts').textContent=attempts;setRobot(...places.PIZZARIA);let crashed=false;for(let cmd of program){let [dr,dc]=delta[cmd],nr=pos[0]+dr,nc=pos[1]+dc;if(nr<0||nr>6||nc<0||nc>6||!isRoad(nr,nc)){crashed=true;status.className='status bad';status.textContent='💥 O robô saiu da rua! Revise o bloco '+cmd+'.';break}setRobot(nr,nc);await sleep(330)}if(crashed)return;let target=places[missions[idx].to];if(pos[0]===target[0]&&pos[1]===target[1]){if(!completed){hits++;document.getElementById('hits').textContent=hits}completed=true;status.className='status good';status.innerHTML='🎉 <b>ENTREGA REALIZADA!</b> A matemática e a programação estão corretas.';document.getElementById('next').classList.remove('disabled');updateStars()}else{status.className='status bad';status.textContent='🤖 O robô executou todos os blocos, mas não chegou ao cliente. Observe onde ele parou e depure o código.'}}
+function updateStars(){let ratio=hits/Math.max(attempts,1);document.getElementById('stars').textContent=ratio>.75?'★★★':ratio>.45?'★★☆':'★☆☆'}
+document.getElementById('next').onclick=()=>{if(!completed)return;if(idx<missions.length-1){idx++;load()}else{status.className='status good';status.innerHTML=`🏆 <b>PARABÉNS!</b> Você concluiu as 20 missões do Robô Entregador!`;document.getElementById('next').classList.add('disabled')}};
+buildGrid();load();
+</script></body></html>
